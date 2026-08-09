@@ -5,6 +5,8 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    versioning-strategy: lockfile-only
+    open-pull-requests-limit: 5
     groups:
       python-minor-patch:
         update-types: [minor, patch]
@@ -14,15 +16,20 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    open-pull-requests-limit: 5
     groups:
       frontend-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: weekly
       day: tuesday
+    open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
     directory: /
@@ -32,9 +39,14 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
+    open-pull-requests-limit: 1
 
   - package-ecosystem: terraform
     directory: /infra/aws/terraform
     schedule:
       interval: weekly
       day: tuesday
+    open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: hashicorp/aws
+        update-types: ["version-update:semver-major"]

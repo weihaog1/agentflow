@@ -28,10 +28,10 @@ jobs:
             dockerfile: Dockerfile.frontend
             target: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
       - name: Build local image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ${{ matrix.dockerfile }}
@@ -47,13 +47,15 @@ jobs:
           format: spdx-json
           output-file: sbom-${{ matrix.name }}.spdx.json
       - name: Scan image vulnerabilities
-        uses: anchore/scan-action@v6
+        uses: anchore/scan-action@v7
         with:
           image: agentflow-${{ matrix.name }}:scan
           fail-build: true
           severity-cutoff: high
+          only-fixed: true
           output-format: table
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: sbom-${{ matrix.name }}
           path: sbom-${{ matrix.name }}.spdx.json
