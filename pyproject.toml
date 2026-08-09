@@ -11,7 +11,7 @@ requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Alan Guo" }]
 dependencies = [
-  "asyncpg>=0.29,<1",
+  "asyncpg>=0.31.0,<1",
   "boto3>=1.35,<2",
   "defusedxml>=0.7,<1",
   "fastapi>=0.115,<1",
