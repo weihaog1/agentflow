@@ -1,0 +1,60 @@
+name: SBOM and vulnerability scan
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "41 10 * * 3"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan-images:
+    name: Scan ${{ matrix.name }} image
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            dockerfile: Dockerfile
+            target: api
+          - name: worker
+            dockerfile: Dockerfile
+            target: worker
+          - name: frontend
+            dockerfile: Dockerfile.frontend
+            target: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build local image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          target: ${{ matrix.target }}
+          load: true
+          tags: agentflow-${{ matrix.name }}:scan
+          cache-from: type=gha,scope=scan-${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=scan-${{ matrix.name }}
+      - name: Generate SPDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: agentflow-${{ matrix.name }}:scan
+          format: spdx-json
+          output-file: sbom-${{ matrix.name }}.spdx.json
+      - name: Scan image vulnerabilities
+        uses: anchore/scan-action@v6
+        with:
+          image: agentflow-${{ matrix.name }}:scan
+          fail-build: true
+          severity-cutoff: high
+          output-format: table
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.name }}
+          path: sbom-${{ matrix.name }}.spdx.json
+          if-no-files-found: error
