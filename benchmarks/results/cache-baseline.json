@@ -1,0 +1,48 @@
+{
+  "benchmark": "response-cache-exact-repeat",
+  "command": "uv run python -m agentflow.benchmarks.cache --write",
+  "environment": {
+    "machine": "arm64",
+    "platform": "Darwin",
+    "platform_release": "25.3.0",
+    "python_implementation": "CPython",
+    "python_version": "3.12.13"
+  },
+  "generated_at_utc": "2026-08-09T20:56:18.913937+00:00",
+  "metrics": {
+    "cache_hits": 9,
+    "cache_misses": 11,
+    "generation_call_reduction_fraction": 0.45,
+    "generation_call_reduction_percent": 45.0,
+    "generation_calls_avoided": 9,
+    "generation_calls_with_cache": 11,
+    "generation_calls_without_cache": 20
+  },
+  "schema_version": 1,
+  "workload": {
+    "cache_key_fields": [
+      "workspace_id",
+      "corpus_revision",
+      "workflow",
+      "input",
+      "document_ids",
+      "prompt_version",
+      "graph_version",
+      "model",
+      "top_k",
+      "retriever_identity"
+    ],
+    "exact_repeat_count": 9,
+    "path": "benchmarks/cache-workload.json",
+    "query_count": 20,
+    "retriever_identity_fields": [
+      "retriever_version",
+      "embedding_provider_id",
+      "candidate_pool",
+      "dense_weight",
+      "sparse_weight"
+    ],
+    "sha256": "da5820789f303f3b9d0c55ee0214e232ca8225bfbcfb32083cf6aaec9f70bfd9",
+    "unique_cache_keys": 11
+  }
+}
