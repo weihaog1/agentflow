@@ -20,11 +20,11 @@ flowchart LR
     API --> DB[("PostgreSQL + pgvector")]
     API --> CACHE[("Redis cache")]
     API --> STORE["S3 or MinIO"]
-    API --> JOBS["Durable job queue"]
+    API --> JOBS["PostgreSQL durable jobs"]
     JOBS --> WORKER["Ingestion worker"]
     WORKER --> STORE
     WORKER --> DB
-    WORKER --> GRAPH["LangGraph workflows"]
+    API --> GRAPH["LangGraph workflows"]
     GRAPH --> DB
     GRAPH --> CACHE
     S3["AWS S3 event"] --> LAMBDA["Validation Lambda"]
@@ -92,7 +92,8 @@ Retrieval cache key inputs:
 - Workspace identifier
 - Corpus revision
 - Normalized query
-- Retriever configuration version
+- Document scope and top-k
+- Retriever version, embedding provider, candidate pool, and ranking weights
 
 Response cache key inputs:
 
@@ -100,9 +101,11 @@ Response cache key inputs:
 - Corpus revision
 - Workflow type
 - Normalized input
+- Document scope and top-k
 - Prompt version
 - Graph version
-- Model identifier
+- Response model identifier
+- Retriever version, embedding provider, candidate pool, and ranking weights
 
 Only successful, citation-backed, verified responses are cached. A document change increments the corpus revision and invalidates both cache layers without scanning keys.
 
@@ -112,8 +115,8 @@ Only successful, citation-backed, verified responses are cached. A document chan
 - File names are normalized and never used as storage paths.
 - Document text is untrusted content and cannot define tools or system instructions.
 - Jobs use bounded retries with an explicit terminal failure state.
-- Logs carry request, run, document, workflow, and trace identifiers.
-- Metrics expose stage latency, cache outcomes, tokens, citation coverage, and failures.
+- Logs carry request, run, document, and workflow identifiers at their relevant boundaries.
+- Metrics expose stage latency, cache outcomes, token counts, citation counts, verification, and failures.
 - Secrets are read from the environment and are never returned by APIs.
 
 ## Acceptance criteria
@@ -124,4 +127,3 @@ Only successful, citation-backed, verified responses are cached. A document chan
 - Unit, integration, and end-to-end tests cover happy paths and failures.
 - CI runs lint, typing, tests, evaluation smoke, benchmark verification, container builds, dependency review, CodeQL, SBOM generation, and vulnerability scanning.
 - The cache claim is scoped to a published workload and reproduced from committed inputs.
-
