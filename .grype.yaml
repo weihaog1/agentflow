@@ -1,0 +1,20 @@
+# The release scan blocks fixable high and critical findings.
+#
+# These CPython findings report fixes only in the unreleased 3.15 line. The
+# runtime uses the current stable 3.14 patch release. Using a release candidate
+# would introduce a larger operational risk than the bounded exceptions below.
+# Remove these rules when a stable supported Python image contains the fixes.
+# Review deadline: 2026-10-31.
+ignore:
+  - vulnerability: CVE-2026-11940
+    package:
+      name: python
+      type: binary
+  - vulnerability: CVE-2026-15308
+    package:
+      name: python
+      type: binary
+  - vulnerability: CVE-2026-11972
+    package:
+      name: python
+      type: binary
