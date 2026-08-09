@@ -1,0 +1,44 @@
+# macOS and editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+dist/
+build/
+*.egg-info/
+
+# JavaScript
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+*.tsbuildinfo
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Runtime data
+.runtime/
+data/
+uploads/
+tmp/
+
+# Infrastructure
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
