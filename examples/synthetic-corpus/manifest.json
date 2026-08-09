@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "corpus_id": "agentflow-synthetic-northstar",
+  "revision": "2026-08-09.1",
+  "description": "Entirely synthetic documents for local demos, tests, evaluation, and benchmarks.",
+  "documents": [
+    {
+      "document_id": "northstar-security-standard",
+      "path": "northstar-security-standard.md",
+      "mime_type": "text/markdown",
+      "revision": "3"
+    },
+    {
+      "document_id": "northstar-retention-schedule",
+      "path": "northstar-retention-schedule.md",
+      "mime_type": "text/markdown",
+      "revision": "2"
+    },
+    {
+      "document_id": "atlas-service-proposal",
+      "path": "atlas-service-proposal.md",
+      "mime_type": "text/markdown",
+      "revision": "1"
+    },
+    {
+      "document_id": "beacon-service-proposal",
+      "path": "beacon-service-proposal.md",
+      "mime_type": "text/markdown",
+      "revision": "1"
+    },
+    {
+      "document_id": "q3-operating-review",
+      "path": "q3-operating-review.md",
+      "mime_type": "text/markdown",
+      "revision": "4"
+    }
+  ]
+}

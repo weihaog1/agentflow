@@ -33,6 +33,7 @@ frontend/coverage/
 
 # Runtime data
 .runtime/
+.data/
 data/
 uploads/
 tmp/
@@ -42,3 +43,4 @@ tmp/
 *.tfstate
 *.tfstate.*
 .terraform.lock.hcl
+!infra/aws/terraform/.terraform.lock.hcl

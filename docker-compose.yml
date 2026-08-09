@@ -1,0 +1,168 @@
+name: agentflow
+
+x-agentflow-environment: &agentflow-environment
+  AGENTFLOW_ENVIRONMENT: local
+  AGENTFLOW_HOST: 0.0.0.0
+  AGENTFLOW_PORT: "8000"
+  AGENTFLOW_LOG_LEVEL: INFO
+  AGENTFLOW_JSON_LOGS: "true"
+  AGENTFLOW_CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
+  AGENTFLOW_REPOSITORY_BACKEND: postgres
+  AGENTFLOW_DATABASE_URL: postgresql://agentflow:agentflow@postgres:5432/agentflow
+  AGENTFLOW_CACHE_BACKEND: redis
+  AGENTFLOW_REDIS_URL: redis://redis:6379/0
+  AGENTFLOW_STORAGE_BACKEND: s3
+  AGENTFLOW_S3_BUCKET: agentflow-documents
+  AGENTFLOW_S3_REGION: us-west-2
+  AGENTFLOW_S3_ENDPOINT_URL: http://minio:9000
+  AGENTFLOW_S3_ACCESS_KEY_ID: agentflow-local
+  AGENTFLOW_S3_SECRET_ACCESS_KEY: agentflow-local-only
+  AGENTFLOW_S3_FORCE_PATH_STYLE: "true"
+  AGENTFLOW_ALLOWED_EXTENSIONS: '[".txt",".md",".pdf",".docx"]'
+  AGENTFLOW_EMBEDDING_PROVIDER: local
+  AGENTFLOW_RESPONSE_PROVIDER: local
+  AGENTFLOW_EMBEDDED_WORKER: "false"
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg17-bookworm
+    environment:
+      POSTGRES_DB: agentflow
+      POSTGRES_USER: agentflow
+      POSTGRES_PASSWORD: agentflow
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentflow -d agentflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.3-alpine3.21
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: agentflow-local
+      MINIO_ROOT_PASSWORD: agentflow-local-only
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        mc alias set local http://minio:9000 agentflow-local agentflow-local-only
+        mc mb --ignore-existing local/agentflow-documents
+    restart: "no"
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    environment: *agentflow-environment
+    command: ["agentflow-migrate"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    environment: *agentflow-environment
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 20
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    environment: *agentflow-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import socket; socket.create_connection(('postgres', 5432), 2).close(); socket.create_connection(('redis', 6379), 2).close()"
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 10
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        VITE_API_BASE_URL: /api/v1
+    ports:
+      - "127.0.0.1:3000:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 10s
+      timeout: 3s
+      start_period: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  minio-data:

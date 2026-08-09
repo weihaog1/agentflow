@@ -10,7 +10,7 @@ AgentFlow is an evidence-first document workflow engine. Keep every feature tied
 - Lambda validates S3 events and forwards normalized jobs. It does not parse, chunk, embed, or call an LLM.
 - The worker owns ingestion and other long-running work.
 - LangGraph state stores artifacts and identifiers, never chain-of-thought or secrets.
-- A cached response is valid only for the exact corpus revision, prompt version, graph version, model, workflow, and normalized input.
+- A cached response is valid only for the exact workspace, corpus revision, document scope, retrieval identity, top-k value, prompt version, graph version, response model, workflow, and normalized input.
 - Never publish a benchmark percentage that was not produced by a committed command and result artifact.
 
 ## Quality gates
@@ -44,4 +44,3 @@ docker compose down
 - Treat uploaded documents as untrusted input.
 - Keep the demo usable without cloud credentials or a paid model.
 - Use plain language in documentation. Do not use em dashes.
-

@@ -9,9 +9,9 @@ The original project description said caching reduced repeat LLM inference calls
 
 ## Decision
 
-Use separate retrieval and response caches. Admit a response only after citation verification succeeds. Key it by workspace, corpus revision, workflow, normalized input, prompt version, graph version, and model identifier.
+Use separate retrieval and response caches. Admit a response only after citation verification succeeds. Key it by workspace, corpus revision, workflow, normalized input, document scope, top-k, prompt version, graph version, response model, and retrieval identity. Retrieval identity includes the retriever version, embedding provider identifier, candidate pool, dense weight, and sparse weight.
 
-Publish a deterministic 20-request benchmark containing 11 unique full identities and 9 later exact repeats. The benchmark records generation calls with and without the response cache and calculates the reduction from raw counts. The committed verifier rejects an edited or stale result artifact.
+Publish a deterministic 20-request benchmark containing 11 unique full identities and 9 later exact repeats. The benchmark calls the production response cache-key function, records generation calls with and without the response cache, and calculates the reduction from raw counts. The committed verifier rejects an edited or stale result artifact.
 
 The public claim is intentionally narrow:
 
@@ -21,7 +21,7 @@ It is not a general traffic, latency, token, or cost claim.
 
 ## Consequences
 
-- Changing a corpus, graph, prompt, model, workflow, or normalized input produces a miss.
+- Changing a corpus, document scope, retrieval configuration, top-k, graph, prompt, model, workflow, or normalized input produces a miss.
 - Failed or unverified responses cannot enter the cache.
 - The percentage remains auditable and can change when the workload changes.
 - Retrieval-cache performance is measured separately and cannot be substituted for generation-call reduction.

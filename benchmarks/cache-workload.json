@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "workload_id": "northstar-exact-repeat-v2",
+  "description": "Twenty synthetic requests with eleven unique production response-cache identities and nine later exact repeats.",
+  "cache_identity_defaults": {
+    "workspace_id": "northstar-demo",
+    "corpus_revision": 1,
+    "prompt_version": "evidence-v1",
+    "graph_version": "bounded-v1",
+    "model": "local-evidence-template-v2",
+    "top_k": 8,
+    "retriever_identity": {
+      "retriever_version": "hybrid-v1",
+      "embedding_provider_id": "local-feature-hash-v1-384",
+      "candidate_pool": 50,
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45
+    }
+  },
+  "queries": [
+    {
+      "request_id": "q01",
+      "workflow": "question",
+      "input": {"question": "How is customer content encrypted?"},
+      "document_ids": ["northstar-security-standard"]
+    },
+    {
+      "request_id": "q02",
+      "workflow": "question",
+      "input": {"question": "How long are security logs retained?"},
+      "document_ids": ["northstar-retention-schedule"]
+    },
+    {
+      "request_id": "q03",
+      "workflow": "question",
+      "input": {"question": "What availability does Atlas commit to?"},
+      "document_ids": ["atlas-service-proposal"]
+    },
+    {
+      "request_id": "q04",
+      "workflow": "question",
+      "input": {"question": "What availability does Beacon commit to?"},
+      "document_ids": ["beacon-service-proposal"]
+    },
+    {
+      "request_id": "q05",
+      "workflow": "compare",
+      "input": {"focus": "availability and support"},
+      "document_ids": ["atlas-service-proposal", "beacon-service-proposal"]
+    },
+    {
+      "request_id": "q06",
+      "workflow": "brief",
+      "input": {
+        "objective": "Summarize Q3 operating review.",
+        "audience": "leadership",
+        "max_points": 5
+      },
+      "document_ids": ["q3-operating-review"]
+    },
+    {
+      "request_id": "q07",
+      "workflow": "question",
+      "input": {"question": "When does Northstar notify a customer of an incident?"},
+      "document_ids": ["northstar-security-standard"]
+    },
+    {
+      "request_id": "q08",
+      "workflow": "compare",
+      "input": {"focus": "data location"},
+      "document_ids": ["atlas-service-proposal", "beacon-service-proposal"]
+    },
+    {
+      "request_id": "q09",
+      "workflow": "question",
+      "input": {"question": "How quickly is an approved deletion request completed?"},
+      "document_ids": ["northstar-retention-schedule"]
+    },
+    {
+      "request_id": "q10",
+      "workflow": "compare",
+      "input": {"focus": "commercial terms"},
+      "document_ids": ["atlas-service-proposal", "beacon-service-proposal"]
+    },
+    {
+      "request_id": "q11",
+      "workflow": "brief",
+      "input": {
+        "objective": "Summarize security and retention controls.",
+        "audience": "risk committee",
+        "max_points": 5
+      },
+      "document_ids": ["northstar-security-standard", "northstar-retention-schedule"]
+    },
+    {
+      "request_id": "q12-repeat-q01",
+      "workflow": "question",
+      "input": {"question": "How is customer content encrypted?"},
+      "document_ids": ["northstar-security-standard"]
+    },
+    {
+      "request_id": "q13-repeat-q02",
+      "workflow": "question",
+      "input": {"question": "How long are security logs retained?"},
+      "document_ids": ["northstar-retention-schedule"]
+    },
+    {
+      "request_id": "q14-repeat-q03",
+      "workflow": "question",
+      "input": {"question": "What availability does Atlas commit to?"},
+      "document_ids": ["atlas-service-proposal"]
+    },
+    {
+      "request_id": "q15-repeat-q04",
+      "workflow": "question",
+      "input": {"question": "What availability does Beacon commit to?"},
+      "document_ids": ["beacon-service-proposal"]
+    },
+    {
+      "request_id": "q16-repeat-q05",
+      "workflow": "compare",
+      "input": {"focus": "availability and support"},
+      "document_ids": ["atlas-service-proposal", "beacon-service-proposal"]
+    },
+    {
+      "request_id": "q17-repeat-q06",
+      "workflow": "brief",
+      "input": {
+        "objective": "Summarize Q3 operating review.",
+        "audience": "leadership",
+        "max_points": 5
+      },
+      "document_ids": ["q3-operating-review"]
+    },
+    {
+      "request_id": "q18-repeat-q07",
+      "workflow": "question",
+      "input": {"question": "When does Northstar notify a customer of an incident?"},
+      "document_ids": ["northstar-security-standard"]
+    },
+    {
+      "request_id": "q19-repeat-q08",
+      "workflow": "compare",
+      "input": {"focus": "data location"},
+      "document_ids": ["atlas-service-proposal", "beacon-service-proposal"]
+    },
+    {
+      "request_id": "q20-repeat-q09",
+      "workflow": "question",
+      "input": {"question": "How quickly is an approved deletion request completed?"},
+      "document_ids": ["northstar-retention-schedule"]
+    }
+  ]
+}

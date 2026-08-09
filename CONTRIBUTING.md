@@ -6,7 +6,7 @@ AgentFlow welcomes focused issues and pull requests that strengthen its three bo
 
 Requirements:
 
-- Python 3.12
+- Python 3.12 or newer
 - `uv`
 - Node.js 22 or newer
 - Docker with Compose
@@ -14,7 +14,7 @@ Requirements:
 Install local dependencies:
 
 ```sh
-uv sync --all-groups
+uv sync --frozen --all-groups
 npm --prefix frontend ci
 ```
 
@@ -27,7 +27,7 @@ docker compose up --build
 Run the quality gates:
 
 ```sh
-make check
+make verify
 ```
 
 ## Pull requests

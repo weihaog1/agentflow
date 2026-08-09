@@ -1,0 +1,84 @@
+name: Bug report
+description: Report a reproducible AgentFlow defect with evidence.
+title: "[Bug]: "
+labels: [bug, needs-triage]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: State the observed defect in one sentence.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      options:
+        - Document ingestion
+        - Cited question answering
+        - Document comparison
+        - Executive brief
+        - Operator frontend
+        - API or worker operations
+        - Cache or retrieval
+        - Infrastructure or CI
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Include the smallest safe input and exact commands or API calls.
+      placeholder: |
+        1. Start the local stack with ...
+        2. Upload a synthetic document with ...
+        3. Run the workflow with ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result and evidence
+      description: Include status codes, run IDs, and sanitized logs. Never include secrets or private documents.
+    validations:
+      required: true
+
+  - type: input
+    id: revision
+    attributes:
+      label: Revision and environment
+      description: Commit SHA, operating system, Python or Node version, and local or AWS mode.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - Blocks all use of a supported workflow
+        - Produces incorrect or unsupported evidence
+        - Causes data isolation or security risk
+        - Degrades reliability or performance
+        - Cosmetic or low impact
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets, credentials, personal data, and private document content.
+          required: true
